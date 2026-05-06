@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends       # importando roteador
 from models import Usuario      # importando modelo de usuario para criar conta
 from dependencies import pegar_sessao # importando função para pegar sessão de banco de dados
+from main import bcrypt_context # importando contexto de criptografia para senhas do main.py
 
 
 auth_router = APIRouter(prefix= "/auth", tags=["auth"])    # definindo prefixo padrao da rota
@@ -25,7 +26,8 @@ async def criar_conta(email: str, senha: str, nome: str, session = Depends(pegar
         if usuario:
                 return {"mensagem": "Email já cadastrado"}
         else:
-                novo_usuario = Usuario(nome, email, senha) # criando novo usuário
+                senha_criptografada = bcrypt_context.hash(senha) # criptografando a senha utilizando o contexto de criptografia definido no main.py             
+                novo_usuario = Usuario(nome, email, senha_criptografada) # criando novo usuário
                 session.add(novo_usuario) # adicionando novo usuário na sessão
                 session.commit() # salvando alterações no banco de dados    
                 return {"mensagem": "Usuário cadastrado com sucesso"}

@@ -1,9 +1,17 @@
 from fastapi import FastAPI
+from passlib.context import CryptContext
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # Carrega as variáveis de ambiente do arquivo .env
+
+SECRET_KEY = os.getenv("SECRET_KEY")  # Obtém a chave secreta do ambiente
 
 
 app = FastAPI()
-
 # SEMPRE Importar rotas após o "app = FastAPI()" para evitar erro de "referência circular"  
+
+bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto") # Configurando o contexto de criptografia para senhas
 
 from auth_routes import auth_router     # mudar para routeR não repetir mesmo nome 
 from order_routes import order_router   # mudar para routeR não repetir mesmo nome
