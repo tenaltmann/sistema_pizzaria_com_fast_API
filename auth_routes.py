@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends       # importando roteador
+from fastapi import APIRouter, Depends, HTTPException       # importando roteador
 from models import Usuario      # importando modelo de usuario para criar conta
 from dependencies import pegar_sessao # importando função para pegar sessão de banco de dados
 from main import bcrypt_context # importando contexto de criptografia para senhas do main.py
@@ -24,7 +24,7 @@ async def home():
 async def criar_conta(email: str, senha: str, nome: str, session = Depends(pegar_sessao)):
         usuario = session.query(Usuario).filter(Usuario.email==email).first() # verificando se o email já existe no banco de dados
         if usuario:
-                return {"mensagem": "Email já cadastrado"}
+                raise HTTPException(status_code=400, detail="Email já cadastrado")      # se o email já existir, retorna um erro 400 (Bad Request) com a mensagem "Email já cadastrado" 
         else:
                 senha_criptografada = bcrypt_context.hash(senha) # criptografando a senha utilizando o contexto de criptografia definido no main.py             
                 novo_usuario = Usuario(nome, email, senha_criptografada) # criando novo usuário
