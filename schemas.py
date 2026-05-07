@@ -1,4 +1,5 @@
 from pydantic import BaseModel      # Importando a classe BaseModel do módulo pydantic, que é usada para criar modelos de dados para validação e serialização.
+from pydantic import Field          # Importando a função Field do módulo pydantic, que é usada para fornecer informações adicionais sobre os campos de um modelo, como descrições, exemplos e validação personalizada.
 from typing import Optional     # Importando a classe Optional do módulo typing, que é usada para indicar que um campo é opcional em um modelo de dados.
 
 class UsuarioSchema(BaseModel):     # Criando a classe UsuarioSchema que herda de BaseModel, essa classe será usada para definir a estrutura dos dados de um usuário, incluindo os campos nome, email, senha, ativo e admin. Os campos ativo e admin são opcionais, o que significa que eles podem ser omitidos ao criar um novo usuário.
@@ -13,7 +14,8 @@ class UsuarioSchema(BaseModel):     # Criando a classe UsuarioSchema que herda d
 
 
 class PedidoSchema(BaseModel):  
-    usuario_id: int
+    id_usuario: int 
 
     class Config:
         from_attributes = True
+        
