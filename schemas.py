@@ -10,3 +10,10 @@ class UsuarioSchema(BaseModel):     # Criando a classe UsuarioSchema que herda d
 
     class Config:
         from_attributes = True      # Configurando a classe Config para permitir a criação de instâncias do modelo a partir de objetos que possuem atributos correspondentes aos campos definidos no modelo. Isso é útil para facilitar a conversão de objetos do banco de dados em instâncias do modelo, permitindo que os dados sejam validados e serializados corretamente.
+
+
+class PedidoSchema(BaseModel):  
+    usuario_id: int
+
+    class Config:
+        from_attributes = True
