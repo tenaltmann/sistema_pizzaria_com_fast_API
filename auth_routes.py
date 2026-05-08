@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException       # importando roteado
 from models import Usuario      # importando modelo de usuario para criar conta
 from dependencies import pegar_sessao # importando função para pegar sessão de banco de dados
 from main import bcrypt_context # importando contexto de criptografia para senhas do main.py
-from schemas import UsuarioSchema # importando schema de usuario para validação dos dados de entrada
+from schemas import UsuarioSchema, LoginSchema # importando schema de usuario para validação dos dados de entrada
 from sqlalchemy.orm import Session # importando Session do SQLAlchemy para tipagem da sessão de banco de dados
 
 
@@ -12,6 +12,15 @@ from sqlalchemy.orm import Session # importando Session do SQLAlchemy para tipag
 
 auth_router = APIRouter(prefix= "/auth", tags=["auth"])    # definindo prefixo padrao da rota
                                             # Ex:    https://dominio/AUTH/caminho definido a partir daqui
+
+
+
+#processo de criação de token PROVISÓRIO
+def criar_token(id_usuario):
+        token = f"agbdfnbdfnbsdfnb{id_usuario})"
+        return token
+
+
 
 
 #   PARA CRIAÇÃO DE ROTAS
@@ -40,3 +49,17 @@ async def criar_conta(usuario_schema: UsuarioSchema  ,session: Session = Depends
                 session.commit() # salvando alterações no banco de dados
                     
                 return {"mensagem": f"Usuário cadastrado com sucesso {usuario_schema.email}"} 
+        
+
+#login -> email e senha -> token de autenticação (JWT) -> acesso as rotas protegidas do sistema
+@auth_router.post("/login")
+async def login( login_schema: LoginSchema, session: Session = Depends(pegar_sessao)):
+        usuario = session.query(Usuario).filter(Usuario.email==login_schema.email).first() # verificando se o email existe no banco de dados
+        if not usuario:
+                raise HTTPException(status_code=400, detail="Email ou senha incorretos") # se o email não existir, retorna um erro 400 (Bad Request) com a mensagem "Email ou senha incorretos"
+        else:
+                access_token = criar_token(usuario.id) # criando token de autenticação utilizando a função criar_token definida acima, passando o id do usuário como parâmetro
+                return {
+                        "access_token": access_token,     # retornando o token de autenticação para o cliente
+                        "token_type": "bearer"              # informando o tipo do token (Bearer)
+                        }
