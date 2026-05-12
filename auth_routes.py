@@ -16,8 +16,8 @@ auth_router = APIRouter(prefix= "/auth", tags=["auth"])    # definindo prefixo p
 
 
 #processo de criação de token PROVISÓRIO
-def criar_token(id_usuario):
-        data_expiracao = datetime.now(timezone.utc) + timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES)) # definindo tempo de expiração do token utilizando a variável de ambiente ACCESS_TOKEN_EXPIRE_MINUTES, convertendo para inteiro e somando com a data atual
+def criar_token(id_usuario, duracao_token=timedelta(minutes=(ACCESS_TOKEN_EXPIRE_MINUTES))):
+        data_expiracao = datetime.now(timezone.utc) + duracao_token # definindo data de expiração do token, somando a data atual com a duração do token (definida como 15 minutos no main.py, mas pode ser alterada passando um valor diferente para o parâmetro duracao_token)
         dic_info = {"sub": id_usuario, "exp": data_expiracao} # criando dicionário com as informações do token, incluindo o id do usuário e a data de expiração
         jwt_codificado = jwt.encode(dic_info, SECRET_KEY, ALGORITHM) # codificando o token utilizando a função encode da biblioteca jose, passando o dicionário de informações, a chave secreta e o algoritmo de criptografia como parâmetros
         return jwt_codificado # retornando o token codificado para o cliente
@@ -71,7 +71,9 @@ async def login( login_schema: LoginSchema, session: Session = Depends(pegar_ses
                 raise HTTPException(status_code=400, detail="Email ou senha incorretos") # se o email não existir, retorna um erro 400 (Bad Request) com a mensagem "Email ou senha incorretos"
         else:
                 access_token = criar_token(usuario.id) # criando token de autenticação utilizando a função criar_token definida acima, passando o id do usuário como parâmetro
+                refresh_token = criar_token(usuario.id, duracao_token=timedelta(days=7)) # criando token de atualização utilizando a função criar_token definida acima, passando o id do usuário como parâmetro (pode ser utilizado para renovar o token de acesso quando ele expirar, mas isso não está implementado nesse example)
                 return {
                         "access_token": access_token,     # retornando o token de autenticação para o cliente
+                        "refresh_token": refresh_token,   # retornando o token de atualização para o cliente
                         "token_type": "bearer"              # informando o tipo do token (Bearer)
                         }
