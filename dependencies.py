@@ -1,5 +1,9 @@
-from models import Usuario, db      # importando modelo de usuario para criar conta
-from sqlalchemy.orm import sessionmaker # importando sessionmaker para criar sessão de banco de dados  
+from fastapi import Depends
+from models import db      # importando modelo de usuario para criar conta
+from sqlalchemy.orm import sessionmaker, Session # importando sessionmaker para criar sessão de banco de dados  
+from models import Usuario
+
+
 
 def pegar_sessao():
 
@@ -9,3 +13,10 @@ def pegar_sessao():
         yield session
     finally:
         session.close() # fechando sessão após uso
+
+
+def verificar_token(token, session: Session = Depends(pegar_sessao)):
+        #verificar se o token é válido
+        #caso valido, extrai o id do usuario do token
+        usuario = session.query(Usuario).filter(Usuario.id==1).first() 
+        return usuario

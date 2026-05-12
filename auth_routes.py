@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException       # importando roteador
 from models import Usuario      # importando modelo de usuario para criar conta
-from dependencies import pegar_sessao # importando função para pegar sessão de banco de dados
+from dependencies import pegar_sessao, verificar_token # importando função para pegar sessão de banco de dados
 from main import bcrypt_context, ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY # importando contexto de criptografia e variáveis de ambiente do main.py para utilização na criação de token e autenticação de usuário
 from schemas import UsuarioSchema, LoginSchema # importando schema de usuario para validação dos dados de entrada
 from sqlalchemy.orm import Session # importando Session do SQLAlchemy para tipagem da sessão de banco de dados
@@ -85,10 +85,8 @@ async def login( login_schema: LoginSchema, session: Session = Depends(pegar_ses
         
 
 @auth_router.get("/refresh")
-async def use_refresh_token(token):
-
-        #verificar token
-        usuario = verificar_token(token) 
+async def use_refresh_token(usuario: Usuario = Depends(verificar_token)):
+ 
         access_token = criar_token(usuario.id)
         return {
                 "access_token": access_token,     # retornando o token de autenticação para o cliente
