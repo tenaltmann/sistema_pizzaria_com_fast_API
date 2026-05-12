@@ -22,6 +22,11 @@ def criar_token(id_usuario, duracao_token=timedelta(minutes=(ACCESS_TOKEN_EXPIRE
         jwt_codificado = jwt.encode(dic_info, SECRET_KEY, ALGORITHM) # codificando o token utilizando a função encode da biblioteca jose, passando o dicionário de informações, a chave secreta e o algoritmo de criptografia como parâmetros
         return jwt_codificado # retornando o token codificado para o cliente
                 
+def verificar_token(token, session: Session = Depends(pegar_sessao)):
+        #verificar se o token é válido
+        #caso valido, extrai o id do usuario do token
+        usuario = session.query(Usuario).filter(Usuario.id==1).first() 
+        return usuario
 
 
 def autenticar_usuario(email, senha, session):
@@ -77,3 +82,17 @@ async def login( login_schema: LoginSchema, session: Session = Depends(pegar_ses
                         "refresh_token": refresh_token,   # retornando o token de atualização para o cliente
                         "token_type": "bearer"              # informando o tipo do token (Bearer)
                         }
+        
+
+@auth_router.get("/refresh")
+async def use_refresh_token(token):
+
+        #verificar token
+        usuario = verificar_token(token) 
+        access_token = criar_token(usuario.id)
+        return {
+                "access_token": access_token,     # retornando o token de autenticação para o cliente
+                "token_type": "bearer"              # informando o tipo do token (Bearer)
+                }
+
+        
