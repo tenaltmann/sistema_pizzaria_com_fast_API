@@ -20,6 +20,14 @@ def criar_token(id_usuario):
         token = f"agbdfnbdfnbsdfnb{id_usuario})"
         return token
 
+def autenticar_usuario(email, senha, session):
+        usuario = session.query(Usuario).filter(Usuario.email==email).first() # verificando se o email existe no banco de dados
+        if not usuario:
+                return False # se o email não existir, retorna False
+        elif not bcrypt_context.verify(senha, usuario.senha):
+                return False # se a senha estiver incorreta, retorna False
+        return usuario
+
 
 
 
@@ -54,7 +62,7 @@ async def criar_conta(usuario_schema: UsuarioSchema  ,session: Session = Depends
 #login -> email e senha -> token de autenticação (JWT) -> acesso as rotas protegidas do sistema
 @auth_router.post("/login")
 async def login( login_schema: LoginSchema, session: Session = Depends(pegar_sessao)):
-        usuario = session.query(Usuario).filter(Usuario.email==login_schema.email).first() # verificando se o email existe no banco de dados
+        usuario = autenticar_usuario(login_schema.email, login_schema.senha, session) # autenticando usuário utilizando a função autenticar_usuario definida acima, passando o email, senha e sessão de banco de dados como parâmetros
         if not usuario:
                 raise HTTPException(status_code=400, detail="Email ou senha incorretos") # se o email não existir, retorna um erro 400 (Bad Request) com a mensagem "Email ou senha incorretos"
         else:
