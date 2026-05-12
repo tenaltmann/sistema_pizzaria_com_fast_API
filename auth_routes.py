@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException       # importando roteador
 from models import Usuario      # importando modelo de usuario para criar conta
 from dependencies import pegar_sessao # importando função para pegar sessão de banco de dados
-from main import bcrypt_context # importando contexto de criptografia para senhas do main.py
+from main import bcrypt_context, ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY # importando contexto de criptografia e variáveis de ambiente do main.py para utilização na criação de token e autenticação de usuário
 from schemas import UsuarioSchema, LoginSchema # importando schema de usuario para validação dos dados de entrada
 from sqlalchemy.orm import Session # importando Session do SQLAlchemy para tipagem da sessão de banco de dados
-
-
+from jose import JWTError, jwt # importando JWTError e jwt da biblioteca jose para criação e verificação de tokens JWT
+from datetime import datetime, timedelta, timezone # importando datetime e timedelta para manipulação de datas e horas, utilizado para definir tempo de expiração do token JWT
 
 
 
@@ -17,8 +17,12 @@ auth_router = APIRouter(prefix= "/auth", tags=["auth"])    # definindo prefixo p
 
 #processo de criação de token PROVISÓRIO
 def criar_token(id_usuario):
-        token = f"agbdfnbdfnbsdfnb{id_usuario})"
-        return token
+        data_expiracao = datetime.now(timezone.utc) + timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES)) # definindo tempo de expiração do token utilizando a variável de ambiente ACCESS_TOKEN_EXPIRE_MINUTES, convertendo para inteiro e somando com a data atual
+        dic_info = {"sub": id_usuario, "exp": data_expiracao} # criando dicionário com as informações do token, incluindo o id do usuário e a data de expiração
+        jwt_codificado = jwt.encode(dic_info, SECRET_KEY, ALGORITHM) # codificando o token utilizando a função encode da biblioteca jose, passando o dicionário de informações, a chave secreta e o algoritmo de criptografia como parâmetros
+        return jwt_codificado # retornando o token codificado para o cliente
+                
+
 
 def autenticar_usuario(email, senha, session):
         usuario = session.query(Usuario).filter(Usuario.email==email).first() # verificando se o email existe no banco de dados

@@ -5,7 +5,10 @@ import os
 
 load_dotenv()  # Carrega as variáveis de ambiente do arquivo .env
 
-SECRET_KEY = os.getenv("SECRET_KEY")  # Obtém a chave secreta do ambiente
+SECRET_KEY = str(os.getenv("SECRET_KEY"))  # Obtém a chave secreta do ambiente
+ALGORITHM = str(os.getenv("ALGORITHM"))  # Obtém o algoritmo de criptografia do ambiente
+ACCESS_TOKEN_EXPIRE_MINUTES= int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))  # Obtém o tempo de expiração do token do ambiente, O 30 é o valor padrão caso a variável de ambiente não esteja definida
+
 
 
 app = FastAPI()
