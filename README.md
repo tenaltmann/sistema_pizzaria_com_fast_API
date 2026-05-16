@@ -1,81 +1,177 @@
-PROJETO MONTANDO UMA API DO ZERO
+# 🍕 Sistema de Pizzaria com FastAPI
 
-BIBLIOTECAS UTILIZADAS
-    fastapi 
-    uvicorn 
-    sqlalchemy 
-    passlib{bcrypt} 
-    python-jose{cryptograph} 
-    python-dotenv 
-    python-multipart
+Sistema backend para gerenciamento de pedidos de pizzaria desenvolvido com FastAPI, utilizando autenticação JWT, integração com banco de dados relacional via SQLAlchemy e estrutura modular baseada em rotas.
 
+Repositório oficial:
+[https://github.com/tenaltmann/sistema_pizzaria_com_fast_API](https://github.com/tenaltmann/sistema_pizzaria_com_fast_API)
 
-# Rest APIs
-    # GET => Leitura/coleta
-    # POST => enviar/criar
-    # PUT / PATCH => edição
-    # DELETE => deletar
+---
 
----------------------------------------------------------------------------------------------------------------
-Formas de criar rotas
-    3 Opções:
-        1 - Criar tudo no aplicativo (main.py) - não recomendado, usado apenas quando há pouquissimas rotas
-        2 - Criar um único arquivo de rotas (routes.py) 
-        3 - Dividir em sessoes - exemplo: rota para autenticações e pedidos (order_routes.py e auth_routes.py) - UTILIZAREMOS ESSA
+## 🚀 Tecnologias Utilizadas
 
-        Tentar sempre utilizar um padão no nome dos arquivos de rotas:
-            order_routes.py
-            auth_routes.py
-            ...._routes.py
+* Python 3.12+
+* FastAPI
+* SQLAlchemy
+* SQLite
+* Pydantic
+* JWT Authentication
+* Passlib + Bcrypt
+* Uvicorn
 
-        SEMPRE
-            atentar na ordem de importação das rotas
-            importar após o "app = Fast API()"
-            isso evita o problema de "referência cicular", ondfe o arquivo main precisa de outros arquivos para funcionar e outros arquivos precisam do main para funcionar
+---
 
----------------------------------------------------------------------------------------------------------------
-COMANDOS NO TERMINAL de instalação
-    Instalação de bibliotecas:
-        pip install fastapi uvicorn sqlalchemy passlib[bcrypt] python-jose[cryptograph] python-dotenv python-multipart
+## 📂 Estrutura Atual do Projeto
 
-        pip install sqlalchemy
+```bash
+sistema_pizzaria_com_fast_API/
+│
+├── main.py                 # Inicialização da aplicação
+├── models.py               # Modelos do banco de dados
+├── schemas.py              # Schemas Pydantic
+├── database.py             # Configuração do banco
+├── dependencies.py         # Dependências reutilizáveis
+├── auth_routes.py          # Rotas de autenticação
+├── pedido_routes.py        # Rotas de pedidos
+├── requirements.txt
+├── .env
+│
+├── venv/
+└── __pycache__/
+```
 
-        pip install sqlalchemy_utils
+---
 
-        pip install alembic
+## 🔐 Funcionalidades Implementadas
 
-        
+### 👤 Autenticação
 
+* Cadastro de usuários
+* Login com JWT
+* Geração de token de acesso
+* Proteção de rotas autenticadas
+* Hash de senha com Bcrypt
 
----------------------------------------------------------------------------------------------------------------
-COMANDOS NO TERMINAL  usados mais de uma vez (rotineiramente)
+---
 
-    Para rodar o código, iniciar o servidor:
-        Executar no terminal:   uvicorn main:app --reload
+### 🍕 Pedidos
 
-        alembic init alembic
+* Criação de pedidos
+* Listagem de pedidos
+* Relacionamento entre usuários e pedidos
+* Persistência em banco de dados
 
-        Comando para gerar o banco de dados
-        alembic revision --autogenerate -m "Initial Migation"
+---
 
+### 🗄️ Banco de Dados
 
+* Integração com SQLAlchemy ORM
+* Sessões reutilizáveis
+* Criação automática das tabelas
+* Estrutura preparada para migração futura
 
----------------------------------------------------------------------------------------------------------------
-ARQUIVOS CRIADOS E FINALIDADES (por ordem de criação)
+---
 
-README.md -         descrição do projeto e explicação basica do processo de desenvolvimento
-main.py -           arquivo principal do aplicativo
-auth_routes.py -    arquivo que irá armazenar as rotas de autenticação
-order_routes.py -   arquivo que irá armazenar as rotas de pedidos
-models.py -         arquivo que irá conter as classes do banco de dadose posteriormente criar o mesmo
+## ⚙️ Como Executar o Projeto
 
+### 1️⃣ Clone o repositório
 
----------------------------------------------------------------------------------------------------------------
-CRIAÇÃO DO BANCO DE DADOS
+```bash
+git clone https://github.com/tenaltmann/sistema_pizzaria_com_fast_API.git
+```
 
-    ORM (Object Relative Models)- Ferramenta de construção de Banco de dados 
-        SQLALCHEMY      -    Traduz os comandos em python para o banco de dados
+---
 
-    BANCO DE DADOS UTILIZADO
-        SQLITE
+### 2️⃣ Acesse a pasta
 
+```bash
+cd sistema_pizzaria_com_fast_API
+```
+
+---
+
+### 3️⃣ Crie o ambiente virtual
+
+### Windows
+
+```bash
+python -m venv venv
+```
+
+Ative:
+
+```bash
+venv\Scripts\activate
+```
+
+---
+
+### Linux / MacOS
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+---
+
+### 4️⃣ Instale as dependências
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+### 5️⃣ Execute o servidor
+
+```bash
+uvicorn main:app --reload
+```
+
+---
+
+## 📌 Acesse a documentação automática
+
+Swagger UI:
+
+```bash
+http://127.0.0.1:8000/docs
+```
+
+Redoc:
+
+```bash
+http://127.0.0.1:8000/redoc
+```
+
+---
+
+## 🔑 Variáveis de Ambiente
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+SECRET_KEY=sua_chave_secreta
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+```
+
+---
+
+## 📖 Conceitos Aplicados no Projeto
+
+* API REST
+* CRUD
+* JWT Authentication
+* Dependency Injection
+* ORM
+* Serialização com Pydantic
+* Organização modular com rotas
+* Segurança de autenticação
+* Relações entre tabelas
+
+---
+
+## 🎯 Objetivo do Projeto
+
+Este proj
