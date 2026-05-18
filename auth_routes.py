@@ -18,15 +18,9 @@ auth_router = APIRouter(prefix= "/auth", tags=["auth"])    # definindo prefixo p
 #processo de criação de token PROVISÓRIO
 def criar_token(id_usuario, duracao_token=timedelta(minutes=(ACCESS_TOKEN_EXPIRE_MINUTES))):
         data_expiracao = datetime.now(timezone.utc) + duracao_token # definindo data de expiração do token, somando a data atual com a duração do token (definida como 15 minutos no main.py, mas pode ser alterada passando um valor diferente para o parâmetro duracao_token)
-        dic_info = {"sub": id_usuario, "exp": data_expiracao} # criando dicionário com as informações do token, incluindo o id do usuário e a data de expiração
+        dic_info = {"sub": str(id_usuario), "exp": data_expiracao} # criando dicionário com as informações do token, incluindo o id do usuário e a data de expiração
         jwt_codificado = jwt.encode(dic_info, SECRET_KEY, ALGORITHM) # codificando o token utilizando a função encode da biblioteca jose, passando o dicionário de informações, a chave secreta e o algoritmo de criptografia como parâmetros
         return jwt_codificado # retornando o token codificado para o cliente
-                
-def verificar_token(token, session: Session = Depends(pegar_sessao)):
-        #verificar se o token é válido
-        #caso valido, extrai o id do usuario do token
-        usuario = session.query(Usuario).filter(Usuario.id==1).first() 
-        return usuario
 
 
 def autenticar_usuario(email, senha, session):
